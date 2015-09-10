@@ -9,8 +9,23 @@ mlklmkmlkmlkmlkmlkmlk<br />
 mlklmklmklmkmlklms<br />
 *****mlkmlkmlkmlkmlklmkmlkml.<br />
 
-| Tables        | Are           | Cool  |
+| ziopiopiop        | poiopiopipo           | poiopipoipo  |
 | ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| poiopiopi      | piopoipoipo | opiopipoiop |
+| opiopipoipo     | centered      |   poiopiopiop |
+| poiopipoiopiop | poiopiopiopi      |    poiopiopiop |
+
+```javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
+ 
+```python
+s = "Python syntax highlighting"
+print s
+```
+ 
+```
+No language indicated, so no syntax highlighting. 
+But let's throw in a <b>tag</b>.
+```
