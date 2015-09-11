@@ -28,10 +28,12 @@ var Thumbnailer = function(width, height, quality, crop, bkg)
 
 Thumbnailer.prototype.init = function()
 { 
+    console.log('debug mobile: before init');
     var box = document.createElement('div');
     box.id = 'thumbnailerbox';
     box.style.display = 'none';
     document.querySelector('body').appendChild(box); 
+    console.log('debug mobile: end init');
 }
 
 
@@ -47,6 +49,7 @@ Thumbnailer.prototype.setImage = function(path, target)
 
 Thumbnailer.prototype.setVideo = function(path, timeCapture, target)
 {
+    console.log('debug mobile: start set video');
     console.log('set Video');
     this.loadVideo
     (
@@ -55,6 +58,7 @@ Thumbnailer.prototype.setVideo = function(path, timeCapture, target)
         timeCapture,
         target
     );
+    console.log('debug mobile: end set video');
 }
 
 
@@ -84,61 +88,95 @@ Thumbnailer.prototype.loadImage =  function(file, name, target)
 
 Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
 {
-    console.log('load Video');
+    console.log('debug mobile: start load video');
+
+    var metadata = false;
+    var data = false;
+    var play = false;
+    var datavideo = false;
+    var canplaythrough = false;
+
     var that =  this;
     var vid = document.createElement('video');
-    vid.width = 300;
-    vid.autoplay = true;
-    vid.controls = true;
+    document.querySelector('#thumbnailerbox').appendChild(vid);
     vid.preload = "auto";
     vid.src = file+'?t='+new Date().getTime();
 
-    document.querySelector('#thumbnailerbox').appendChild(vid);
 
-    //vid.load();
 
     vid.addEventListener
     (
         'loadedmetadata', 
         function() 
         {
-            console.log('load metadata');
+            console.log('debug mobile: start loadedmetadata');
             vid.currentTime = timeCapture;
+            metadata = true;
 
-            vid.addEventListener
-            (
-                'play', 
-                function() 
-                {
-                    console.log('play');
-                    var video = this;
-                    this.pause();
+            if(data && metadata && canplaythrough)
+                that.launchVideoCapture(name, target, datavideo);
 
-                    setTimeout
-                    (
-                        function()
-                        {
-                            console.log('timeout');
-                            that.imagetocanvas
-                            ( 
-                                video, 
-                                that.width, 
-                                that.height, 
-                                that.crop, 
-                                that.bkg, 
-                                name,
-                                target,
-                                'video'
-                            );
-                        },
-                        950
-                    );
-                }
-            );
+            console.log('debug mobile: end loadedmetadata');
         }
     );
 
-    
+    vid.addEventListener
+    (
+        'loadeddata', 
+        function() 
+        {
+            console.log('debug mobile: start loadeddata');
+            data = true;
+
+            if(data && metadata && canplaythrough)
+                that.launchVideoCapture(name, target, datavideo);
+
+            console.log('debug mobile: end loadeddata');
+        }
+    );
+
+    vid.addEventListener
+    (
+        'canplaythrough', 
+        function() 
+        {
+            console.log('debug mobile: start canplaythrough');
+            datavideo = this;
+            canplaythrough = true;
+
+            if(data && metadata && canplaythrough)
+                that.launchVideoCapture(name, target, datavideo);
+
+            console.log('debug mobile: end canplaythrough');
+        }
+    );
+
+    console.log('debug mobile: end load video');
+}
+
+Thumbnailer.prototype.launchVideoCapture = function(name, target, datavideo)
+{
+    console.log('debug mobile: start launchVideoCapture');
+    var that = this;
+    setTimeout
+    (
+        function()
+        {
+            that.imagetocanvas
+            ( 
+                datavideo, 
+                that.width, 
+                that.height, 
+                that.crop, 
+                that.bkg, 
+                name,
+                target,
+                'video'
+            );
+        },
+        250
+    );
+    console.log('debug mobile: end launchVideoCapture');
 }
 
 
