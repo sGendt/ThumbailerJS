@@ -26,7 +26,13 @@ var Thumbnailer = function(width, height, quality, crop, bkg)
 }
 
 
-Thumbnailer.prototype.init = function(){ /*...*/ }
+Thumbnailer.prototype.init = function()
+{ 
+    var box = document.createElement('div');
+    box.id = 'thumbnailerbox';
+    box.style.display = 'none';
+    document.querySelector('body').appendChild(box); 
+}
 
 
 Thumbnailer.prototype.setImage = function(path, target)
@@ -41,6 +47,7 @@ Thumbnailer.prototype.setImage = function(path, target)
 
 Thumbnailer.prototype.setVideo = function(path, timeCapture, target)
 {
+    console.log('set Video');
     this.loadVideo
     (
         path,
@@ -77,19 +84,25 @@ Thumbnailer.prototype.loadImage =  function(file, name, target)
 
 Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
 {
+    console.log('load Video');
     var that =  this;
     var vid = document.createElement('video');
-    vid.src = file+'?t='+new Date().getTime();
-    vid.load();
-    vid.width = 150;
+    vid.width = 300;
     vid.autoplay = true;
+    vid.controls = true;
     vid.preload = "auto";
+    vid.src = file+'?t='+new Date().getTime();
+
+    document.querySelector('#thumbnailerbox').appendChild(vid);
+
+    //vid.load();
 
     vid.addEventListener
     (
         'loadedmetadata', 
         function() 
         {
+            console.log('load metadata');
             vid.currentTime = timeCapture;
 
             vid.addEventListener
@@ -97,6 +110,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
                 'play', 
                 function() 
                 {
+                    console.log('play');
                     var video = this;
                     this.pause();
 
@@ -104,6 +118,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
                     (
                         function()
                         {
+                            console.log('timeout');
                             that.imagetocanvas
                             ( 
                                 video, 
@@ -116,7 +131,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
                                 'video'
                             );
                         },
-                        850
+                        950
                     );
                 }
             );
