@@ -92,8 +92,6 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
 
     var metadata = false;
     var data = false;
-    var play = false;
-    var datavideo = false;
     var canplaythrough = false;
 
     var that =  this;
@@ -101,8 +99,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
     document.querySelector('#thumbnailerbox').appendChild(vid);
     vid.preload = "auto";
     vid.src = file+'?t='+new Date().getTime();
-
-
+    vid.setAttribute('crossOrigin', 'anonymous');
 
     vid.addEventListener
     (
@@ -114,7 +111,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
             metadata = true;
 
             if(data && metadata && canplaythrough)
-                that.launchVideoCapture(name, target, datavideo);
+                that.launchVideoCapture(name, target, vid);
 
             console.log('debug mobile: end loadedmetadata');
         }
@@ -129,7 +126,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
             data = true;
 
             if(data && metadata && canplaythrough)
-                that.launchVideoCapture(name, target, datavideo);
+                that.launchVideoCapture(name, target, vid);
 
             console.log('debug mobile: end loadeddata');
         }
@@ -141,11 +138,10 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
         function() 
         {
             console.log('debug mobile: start canplaythrough');
-            datavideo = this;
             canplaythrough = true;
 
             if(data && metadata && canplaythrough)
-                that.launchVideoCapture(name, target, datavideo);
+                that.launchVideoCapture(name, target, vid);
 
             console.log('debug mobile: end canplaythrough');
         }
@@ -154,7 +150,7 @@ Thumbnailer.prototype.loadVideo =  function(file, name, timeCapture, target)
     console.log('debug mobile: end load video');
 }
 
-Thumbnailer.prototype.launchVideoCapture = function(name, target, datavideo)
+Thumbnailer.prototype.launchVideoCapture = function(name, target, vid)
 {
     console.log('debug mobile: start launchVideoCapture');
     var that = this;
@@ -164,7 +160,7 @@ Thumbnailer.prototype.launchVideoCapture = function(name, target, datavideo)
         {
             that.imagetocanvas
             ( 
-                datavideo, 
+                vid, 
                 that.width, 
                 that.height, 
                 that.crop, 
@@ -174,7 +170,7 @@ Thumbnailer.prototype.launchVideoCapture = function(name, target, datavideo)
                 'video'
             );
         },
-        250
+        200
     );
     console.log('debug mobile: end launchVideoCapture');
 }
@@ -218,13 +214,16 @@ Thumbnailer.prototype.imagetocanvas = function
       img, dimensions.x, dimensions.y, dimensions.w, dimensions.h
     );
 
-    return this.get(name, target);
+    return this.get(name, target, type);
 }
 
 
-Thumbnailer.prototype.get = function(name, target) 
+Thumbnailer.prototype.get = function(name, target, type) 
 {
+    /* Erreur mobile */
     var url = this.canvas.toDataURL('image/jpeg', this.quality);
+    /* Fin erreur mobile*/
+
     var thumb = document.querySelector(target);
     thumb.src= url;
 
